@@ -196,9 +196,10 @@ function App() {
   );
 }
 
-export default App;>)
-```
+export default App;
 
+```
 다음과 같은 결과를 얻을 수 있습니다.
 
-![[스크린샷 2023-02-17 오전 5.28.55.png]]
+<img width="681" alt="스크린샷 2023-02-17 오후 3 55 59" src="https://user-images.githubusercontent.com/122663756/219571634-16832223-f9cc-4f86-a44d-c475812668b9.png">
+
