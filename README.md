@@ -1,70 +1,204 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 1. JSON이란?
 
-## Available Scripts
+-   **(1) 개념**
+    
+    > JSON : JavaScript Object Notation 자바스크립트 객체 문법에 토대를 둔, 문자 기반의 데이터 교환 형식
+    
+-   **(2) 구조**
+    
+    일반적인 JSON 구조는 자바스크립트 객체 리터럴 작성법을 따릅니다. 자바스크립트의 원시 자료형인 문자열, 숫자, 불리언을 가질 수 있고 중첩된 계층 구조 또한 가질 수 있습니다.
+    
+    (자료출처 : MDN 공식문서)
+    
+    ```json
+    {
+      "squadName": "Super hero squad",
+      "homeTown": "Metro City",
+      "formed": 2016,
+      "secretBase": "Super tower",
+      "active": true,
+      "members": [
+        {
+          "name": "Molecule Man",
+          "age": 29,
+          "secretIdentity": "Dan Jukes",
+          "powers": [
+            "Radiation resistance",
+            "Turning tiny",
+            "Radiation blast"
+          ]
+        },
+        {
+          "name": "Madame Uppercut",
+          "age": 39,
+          "secretIdentity": "Jane Wilson",
+          "powers": [
+            "Million tonne punch",
+            "Damage resistance",
+            "Superhuman reflexes"
+          ]
+        },
+        {
+          "name": "Eternal Flame",
+          "age": 1000000,
+          "secretIdentity": "Unknown",
+          "powers": [
+            "Immortality",
+            "Heat Immunity",
+            "Inferno",
+            "Teleportation",
+            "Interdimensional travel"
+          ]
+        }
+      ]
+    }
+    ```
+    
+    자바스크립트 객체 형태와 완전히 같지는 않아요. 비슷한 것 뿐입니다. 작은 따옴포(’’)가 아닌 끝 따옴표(””)만이 허용됩니다.
+    
+-   **(3) 메서드**
+    
+    JSON → 문자열 형태 → **서버 - 클라이언트 간 데이터 전송 시 사용**해요.
+    
+    하지만, 다음 두 경우를 위해 파싱(parsing) 과정이 필요합니다.
+    
+    ## 1.  JS 객체를 JSON 형태로 전송
+    ## 2.  JSON 형태를 JS 객체 형태로 사용
+    
+    **# stringify()**
+    
+    : 자바스크립트 객체 → JSON 문자열 변환. 네트워크를 통해 객체를 JSON 문자열로 변환할 때 주로 사용합니다.
+    
+    ```jsx
+    console.log(JSON.stringify({ x: 5, y: 6 }));
+    // Expected output: "{"x":5,"y":6}"
+    
+    console.log(JSON.stringify([new Number(3), new String('false'), new Boolean(false)]));
+    // Expected output: "[3,"false",false]"
+    
+    console.log(JSON.stringify({ x: [10, undefined, function(){}, Symbol('')] }));
+    // Expected output: "{"x":[10,null,null,null]}"
+    
+    console.log(JSON.stringify(new Date(2006, 0, 2, 15, 4, 5)));
+    // Expected output: ""2006-01-02T15:04:05.000Z""
+    ```
+    
+    **# parse()**
+    
+    : JSON 문자열 → 자바스크립트 객체 변환. 네트워크 통신의 결과를 통해 받아온 JSON 문자열을 프로그램 내부에서 사용하기 위해 JS 객체로 변환할 때 사용.
+    
+    ```jsx
+    const json = '{"result":true, "count":42}';
+    const obj = JSON.parse(json);
+    
+    console.log(obj.count);
+    // Expected output: 42
+    
+    console.log(obj.result);
+    // Expected output: true
+    ```
+    
+-   (4) JSONPlaceholder
+  ![[스크린샷 2023-02-17 오전 5.28.26.png]]
+ 
+  가짜 서버(= fake server, mock API server)
 
-In the project directory, you can run:
+아래 API를 통해 JSON 기반 DB 통신을 일으켜봅시다.
 
-### `yarn start`
+```jsx
+fetch('<https://jsonplaceholder.typicode.com/posts>')
+  .then((response) => response.json())
+  .then((json) => console.log(json));
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+**App.jsx**
+```jsx
+[import "./App.css";
+import { useEffect, useState } from "react";
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+function App() {
+  const [data, setData] = useState([]);
 
-### `yarn test`
+  useEffect(() => {
+    fetch("<https://jsonplaceholder.typicode.com/posts>")
+      .then((response) => {
+        console.log();
+        console.log("response.json()", response);
+        return response.json();
+      })
+      .then((json) => {
+        console.log("json", json);
+        setData([...json]);
+      });
+  }, []);
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+  return (
+    <div>
+      {data.map((item) => {
+        return (
+          <div
+            style={{
+              border: "1px solid black",
+              margin: "3px",
+            }}
+            key={item.id}
+          >
+            <ul>
+              <li>userId : {item.userId}</li>
+              <li>id : {item.id}</li>
+              <li>title : {item.title}</li>
+              <li>body : {item.body}</li>
+            </ul>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
-### `yarn build`
+export default App;](<import React, { useEffect, useState } from "react";
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+function App() {
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+// JSON 으로 부터  가져온 데이털르 저장할 변수 state를 선언 [데이터가 배열 형태이기 때문에 기본값에 배열을 넣어줌]
+  const [data, setData] = useState([]);
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `yarn eject`
+  //컴포넌트가 처음에 마운트 될 때 사용 
+  useEffect(() =%3E {
+    //fetch 라는 내장 함수로 읽어옴 , fetch로 가져오면 자바스크립트 형태로 남음
+    fetch("https://jsonplaceholder.typicode.com/posts")
+      .then((response) => response.json())
+      .then((json) => {
+        //state에 결과값 저장 ...으로 풀어주고 []을 사용해 다시 배열에 넣음 , 원래 배열이었으니까
+        setData([...json]);
+        return console.log(json);
+      });
+  }, []);
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+  return (
+    %3Cdiv>
+      <h3>JSONPlacehorder</h3>
+      {data.map(function (item) {
+        return (
+          <div style={{ border: "1px solid black" }}>
+            <ul>
+              <li>{item.userId}</li>
+              <li>{item.id}</li>
+              <li>{item.title}</li>
+              <li>{item.body}</li>
+            </ul>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+export default App;>)
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+다음과 같은 결과를 얻을 수 있습니다.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+![[스크린샷 2023-02-17 오전 5.28.55.png]]
